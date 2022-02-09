@@ -1,0 +1,130 @@
+version: '3.4'
+
+services:
+  classroomservicedb:
+    container_name: classroomservicedb
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    volumes:
+      - classroomservice-sql-server-data:/var/opt/mssql/data
+    environment:
+       ACCEPT_EULA: "Y"
+       SA_PASSWORD: "Pa55word!"
+       MSSQL_PID: "Express"
+    ports:
+      - "1433:1433"
+
+  classroomserviceapi:
+    image: oesregistry.azurecr.io/classroomserviceapi
+    build:
+      context: .
+      dockerfile: OnlineEducationSystem/ClassroomService/ClassroomServiceAPI/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "7189"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__ClassroomServiceDB: "Server=tcp:classroomservicedbserver.database.windows.net,1433;Initial Catalog=classroomservicedb;Persist Security Info=False;User ID=team5;Password=Jo27148193@98;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      ASPNETCORE_Kestrel__Certificates__Development__Password: "Pa55word!"
+      ASPNETCORE_Kestrel__Certificates__Development__Path: "~/.aspnet/https/"
+    # volumes:
+    #   - OnlineEducationSystem\ClassroomService\ClassroomServiceAPI\https\:/https/
+    ports:
+      - 5189:80
+      - 7189:443
+    depends_on:
+      - loginservicedb
+      - classroomservicedb
+      - loginserviceapi
+
+  loginservicedb:
+    container_name: loginservicedb
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    user: root
+    volumes:
+      - loginservice-sql-server-data:/var/opt/mssql/data
+    environment:
+       ACCEPT_EULA: "Y"
+       SA_PASSWORD: "Pa55word!"
+       MSSQL_PID: "Express"
+    ports:
+      - "1434:1433"
+
+  loginserviceapi:
+    image: oesregistry.azurecr.io/loginserviceapi
+    build:
+      context: .
+      dockerfile: OnlineEducationSystem/LoginService/LoginServiceAPI/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "5001"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__LoginServiceDB: "Server=tcp:classroomservicedbserver.database.windows.net,1433;Initial Catalog=identityservicedb;Persist Security Info=False;User ID=team5;Password=Jo27148193@98;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      ASPNETCORE_Kestrel__Certificates__Development__Password: "Pa55word!"
+      ASPNETCORE_Kestrel__Certificates__Development__Path: "~/.aspnet/https/"
+    # volumes:
+    #   - OnlineEducationSystem\LoginService\LoginServiceAPI\https\:/https/
+    ports:
+      - 5001:443
+    depends_on:
+      - loginservicedb
+
+  oes.web.bff:
+    image: oesregistry.azurecr.io/oeswebbff
+    build:
+      context: .
+      dockerfile: OnlineEducationSystem/OES.WEB.BFF/OES.WEB.BFF/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "5002"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ASPNETCORE_Kestrel__Certificates__Development__Password: "Pa55word!"
+      ASPNETCORE_Kestrel__Certificates__Development__Path: "~/.aspnet/https/"
+    # volumes:
+    #   - OnlineEducationSystem\OES.WEB.BFF\OES.WEB.BFF\https\:/https/
+    ports:
+      - 5000:80
+      - 5002:443
+    depends_on:
+      - loginservicedb
+      - classroomservicedb
+      - loginserviceapi
+      - classroomserviceapi
+
+  userserviceapi:
+    image: oesregistry.azurecr.io/userserviceapi
+    build:
+      context: .
+      dockerfile: OnlineEducationSystem/UserService/UserServiceAPI/Dockerfile
+    environment:
+      ASPNETCORE_URLS: "https://+;http://+"
+      ASPNETCORE_HTTPS_PORT: "7095"
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__UserServiceDB: "Server=tcp:classroomservicedbserver.database.windows.net,1433;Initial Catalog=identityservicedb;Persist Security Info=False;User ID=team5;Password=Jo27148193@98;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      ASPNETCORE_Kestrel__Certificates__Development__Password: "Pa55word!"
+      ASPNETCORE_Kestrel__Certificates__Development__Path: "~/.aspnet/https/"
+    # volumes:
+    #   - OnlineEducationSystem\UserService\UserServiceAPI\https\:/https/
+    ports:
+      - 7095:443
+      - 5095:80
+    depends_on:
+      - loginservicedb
+      - loginserviceapi
+    
+volumes:
+  classroomservice-sql-server-data: 
+    driver: azure_file
+    driver_opts:
+      share_name: classroomservice-sql-server-data-volume
+      storage_account_name: oesstorageaccountteam5
+  loginservice-sql-server-data: 
+    driver: azure_file
+    driver_opts:
+      share_name: loginservice-sql-server-data-volume
+      storage_account_name: oesstorageaccountteam5
+  # oes-certificate-storage:
+  #   driver: azure_file
+  #   driver_opts:
+  #     share_name: oes-certificate-storage
+  #     storage_account_name: oesstorageaccountteam5
+    
