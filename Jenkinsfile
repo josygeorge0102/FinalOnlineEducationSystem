@@ -15,7 +15,7 @@ pipeline{
         }
        stage ('Docker Compose Push') {
             steps {                         
-                    sh 'docker login oesregistry.azurecr.io -u OESRegistry -p EWdqcMQEOfw8NbUGFm7=3eO5=U94c5M4'
+                    sh 'docker login oesdemo.azurecr.io -u OESDemo -p /nmSJE7Z1LVEQBhCXPPFr8Q52dNnzKrf'
                     sh'docker-compose push'          
             }
         }
