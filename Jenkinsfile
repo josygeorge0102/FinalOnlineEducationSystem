@@ -5,7 +5,7 @@ pipeline{
 
         stage ('checkout') {
             steps {
-                git ''
+                git 'https://github.com/josygeorge0102/FinalOnlineEducationSystem.git'
             }
         }
         stage ('docker build') {
