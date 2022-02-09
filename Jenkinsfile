@@ -19,14 +19,14 @@ pipeline{
 //         }
         stage ('docker build') {
             steps {
-                sh 'sudo docker-compose build'
+                sh 'docker-compose build'
             }
         }
       
        stage ('Docker Compose Push') {
             steps {                         
                     sh 'docker login oesdemo.azurecr.io -u OESDemo -p /nmSJE7Z1LVEQBhCXPPFr8Q52dNnzKrf'
-                    sh'sudo docker-compose push'          
+                    sh'docker-compose push'          
             }
         }
       
