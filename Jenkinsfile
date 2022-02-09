@@ -8,11 +8,7 @@ pipeline{
                 git 'https://github.com/josygeorge0102/OnlineEducationSystem.git'
             }
         }
-       stage ('Docker Compose Build') {
-            steps {
-                sh'docker-compose build'
-            }
-        }
+      
        stage ('Docker Compose Push') {
             steps {                         
                     sh 'docker login oesdemo.azurecr.io -u OESDemo -p /nmSJE7Z1LVEQBhCXPPFr8Q52dNnzKrf'
