@@ -8,15 +8,15 @@ pipeline{
                 git 'https://github.com/josygeorge0102/FinalOnlineEducationSystem.git'
             }
         }
-        stage("Fix the permission issue") {
+//         stage("Fix the permission issue") {
 
-            agent any
+//             agent any
 
-            steps {
-                sh "sudo chown root:jenkins /run/docker.sock"
-                }
+//             steps {
+//                 sh "sudo chown root:jenkins /run/docker.sock"
+//                 }
 
-        }
+//         }
         stage ('docker build') {
             steps {
                 sh 'sudo docker-compose build'
