@@ -17,11 +17,11 @@ pipeline{
 //                 }
 
 //         }
-        stage ('docker build') {
-            steps {
-                sh 'docker-compose build'
-            }
-        }
+//         stage ('docker build') {
+//             steps {
+//                 sh 'docker-compose build'
+//             }
+//         }
       
        stage ('Docker Compose Push') {
             steps {                         
