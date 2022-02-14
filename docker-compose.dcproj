@@ -12,5 +12,4 @@
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
   </ItemGroup>
-<!--  My true identity is Grisha Jaeger  -->
 </Project>
